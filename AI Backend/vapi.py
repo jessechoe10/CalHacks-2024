@@ -1,34 +1,9 @@
 from flask import Flask, request, jsonify
 from vapi_python import Vapi
-from dotenv import load_dotenv
-import google.generativeai as genai
-import os
-
-load_dotenv()
 
 app = Flask(__name__)
 # Set the API key for Gemini
-genai.configure(api_key=os.environ["API_KEY"])
 vapi = Vapi(api_key='3661f60f-c3ea-4dfd-acf5-f4d302258e7a')
-
-@app.route('/process_pdf', methods=['POST'])
-def process_pdf():
-    print(request.json.get("pdf_path"))
-    # Path to the uploaded PDF file
-    pdf_path = request.json.get("pdf_path")
-    
-    if not pdf_path:
-        return jsonify({"error": "No PDF path provided"}), 400
-
-    # Process the PDF and generate summary
-    media = pathlib.Path(__file__).parents[1] / "third_party"
-    model = genai.GenerativeModel("gemini-1.5-flash")
-    sample_pdf = genai.upload_file(media / pdf_path)
-    response = model.generate_content(["Give me a summary of this pdf file. Split it into two sections (each with 2 sentences). One section is 'Motivation' and the other is 'Background'", sample_pdf])
-
-    # Return the generated summary
-    return jsonify({"summary": response.text})
-
 
 assistant = {
     'firstMessage': 'Would you like to start?',
